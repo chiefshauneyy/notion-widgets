@@ -1,0 +1,29 @@
+{
+  "title": "Daily Focus",
+  "dateLabel": "auto",
+  "focus": {
+    "headline": "Win the day",
+    "subhead": "Do the obvious things with violence of action.",
+    "topPriorities": [
+      "Book flights (or decide exact dates) for upcoming trips",
+      "Train: complete today’s sessions",
+      "Write 30–60 minutes (chapter / outline)"
+    ],
+    "winConditions": [
+      "Zero alcohol",
+      "Hit protein target",
+      "Finish one hard task before noon"
+    ]
+  },
+  "checklist": [
+    { "text": "Hydrate (1L by noon)", "done": false },
+    { "text": "Cardio session", "done": false },
+    { "text": "Lift session", "done": false },
+    { "text": "10 min mobility", "done": false },
+    { "text": "Skincare PM", "done": false }
+  ],
+  "notes": {
+    "prompt": "Notes",
+    "body": "Keep it simple. Execute."
+  }
+}
