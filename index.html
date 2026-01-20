@@ -19,6 +19,28 @@
       --panel-border: 1px solid rgba(255,255,255,.06);
       --card-bg: rgba(0,0,0,.25);
       --card-border: 1px solid rgba(255,255,255,.06);
+
+      /* Goals base */
+      --goals-gap: 14px;
+      --goals-col-radius: 16px;
+      --goals-card-radius: 14px;
+
+      /* Notion-like column colors */
+      --na-bg: rgba(255,255,255,.04);
+      --na-border: rgba(255,255,255,.08);
+      --na-accent: rgba(180, 190, 195, .95);
+
+      --pl-bg: rgba(80, 145, 255, .13);
+      --pl-border: rgba(80, 145, 255, .25);
+      --pl-accent: rgba(120, 170, 255, .95);
+
+      --ip-bg: rgba(230, 180, 70, .13);
+      --ip-border: rgba(230, 180, 70, .25);
+      --ip-accent: rgba(245, 200, 90, .95);
+
+      --dn-bg: rgba(60, 190, 120, .13);
+      --dn-border: rgba(60, 190, 120, .25);
+      --dn-accent: rgba(110, 220, 160, .95);
     }
 
     *{ box-sizing:border-box; }
@@ -324,7 +346,7 @@
       color: #cfe0da;
     }
 
-    /* ===== Goals Board ===== */
+    /* ===== Goals Section ===== */
     .section{
       margin-top: 18px;
     }
@@ -358,7 +380,7 @@
     .goals-board{
       display:grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
+      gap: var(--goals-gap);
     }
 
     @media (max-width: 980px){
@@ -368,13 +390,45 @@
       .goals-board{ grid-template-columns: 1fr; }
     }
 
+    /* Column base */
     .g-col{
-      background: rgba(0,0,0,.16);
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: 16px;
+      border-radius: var(--goals-col-radius);
       padding: 12px;
-      box-shadow: 0 8px 22px rgba(0,0,0,.25);
+      box-shadow: 0 10px 26px rgba(0,0,0,.26);
       min-height: 180px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.12);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Notion-like column color variants via data attribute */
+    .g-col[data-col="not_active"]{
+      background: linear-gradient(180deg, var(--na-bg), rgba(0,0,0,.16));
+      border-color: var(--na-border);
+    }
+    .g-col[data-col="planned"]{
+      background: linear-gradient(180deg, var(--pl-bg), rgba(0,0,0,.16));
+      border-color: var(--pl-border);
+    }
+    .g-col[data-col="in_progress"]{
+      background: linear-gradient(180deg, var(--ip-bg), rgba(0,0,0,.16));
+      border-color: var(--ip-border);
+    }
+    .g-col[data-col="done"]{
+      background: linear-gradient(180deg, var(--dn-bg), rgba(0,0,0,.16));
+      border-color: var(--dn-border);
+    }
+
+    /* soft glow */
+    .g-col::after{
+      content:"";
+      position:absolute;
+      inset:-40% -20% auto -20%;
+      height: 65%;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.08), rgba(255,255,255,0) 60%);
+      opacity:.35;
+      pointer-events:none;
     }
 
     .g-colhead{
@@ -383,6 +437,8 @@
       justify-content:space-between;
       gap: 10px;
       margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
     }
 
     .g-pill{
@@ -391,32 +447,80 @@
       gap: 8px;
       padding: 4px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
       font-size: 12px;
-      font-weight: 900;
+      font-weight: 950;
       letter-spacing:.2px;
-      color: rgba(232,242,238,.92);
+      color: rgba(232,242,238,.94);
       text-transform: none;
     }
 
     .g-count{
-      color: rgba(154,167,163,.95);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width: 26px;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
       font-size: 12px;
-      font-weight: 850;
+      font-weight: 950;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color: rgba(232,242,238,.90);
+    }
+
+    /* header accents by column id */
+    .g-col[data-col="not_active"] .g-pill,
+    .g-col[data-col="not_active"] .g-count{
+      border-color: rgba(180,190,195,.35);
+    }
+    .g-col[data-col="planned"] .g-pill,
+    .g-col[data-col="planned"] .g-count{
+      border-color: rgba(120,170,255,.40);
+    }
+    .g-col[data-col="in_progress"] .g-pill,
+    .g-col[data-col="in_progress"] .g-count{
+      border-color: rgba(245,200,90,.40);
+    }
+    .g-col[data-col="done"] .g-pill,
+    .g-col[data-col="done"] .g-count{
+      border-color: rgba(110,220,160,.40);
     }
 
     .g-list{
       display:flex;
       flex-direction:column;
       gap: 10px;
+      position: relative;
+      z-index: 1;
     }
 
     .g-card{
-      background: rgba(255,255,255,.03);
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: 14px;
+      border-radius: var(--goals-card-radius);
       padding: 10px 10px 9px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
+    }
+
+    /* Card tint by column (subtle but Notion-like) */
+    .g-col[data-col="planned"] .g-card{
+      background: rgba(80,145,255,.10);
+      border-color: rgba(80,145,255,.18);
+    }
+    .g-col[data-col="in_progress"] .g-card{
+      background: rgba(230,180,70,.10);
+      border-color: rgba(230,180,70,.18);
+    }
+    .g-col[data-col="done"] .g-card{
+      background: rgba(60,190,120,.10);
+      border-color: rgba(60,190,120,.18);
+    }
+    .g-col[data-col="not_active"] .g-card{
+      background: rgba(255,255,255,.04);
+      border-color: rgba(255,255,255,.10);
     }
 
     .g-row{
@@ -428,9 +532,9 @@
 
     .g-title{
       font-size: 13px;
-      font-weight: 900;
+      font-weight: 950;
       line-height: 1.25;
-      color: rgba(232,242,238,.92);
+      color: rgba(232,242,238,.94);
       display:flex;
       gap: 8px;
       align-items:flex-start;
@@ -439,19 +543,20 @@
     .g-emoji{ width: 18px; text-align:center; }
 
     .g-meta{
-      color: rgba(154,167,163,.95);
+      color: rgba(232,242,238,.78);
       font-size: 12px;
-      font-weight: 850;
+      font-weight: 900;
       white-space: nowrap;
       margin-top: 1px;
+      opacity: .95;
     }
 
     .g-progress{
       margin-top: 8px;
       height: 8px;
       border-radius: 999px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.06);
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.10);
       overflow:hidden;
     }
 
@@ -462,15 +567,34 @@
       box-shadow: 0 0 18px rgba(168,240,179,.12);
     }
 
+    /* progress tint per column */
+    .g-col[data-col="not_active"] .g-progress > div{
+      background: linear-gradient(90deg, rgba(180,190,195,.85), rgba(210,220,225,.75));
+      box-shadow: 0 0 16px rgba(180,190,195,.10);
+    }
+    .g-col[data-col="planned"] .g-progress > div{
+      background: linear-gradient(90deg, rgba(120,170,255,.90), rgba(80,145,255,.85));
+      box-shadow: 0 0 16px rgba(120,170,255,.12);
+    }
+    .g-col[data-col="in_progress"] .g-progress > div{
+      background: linear-gradient(90deg, rgba(245,200,90,.92), rgba(230,180,70,.85));
+      box-shadow: 0 0 16px rgba(245,200,90,.12);
+    }
+    .g-col[data-col="done"] .g-progress > div{
+      background: linear-gradient(90deg, rgba(110,220,160,.92), rgba(60,190,120,.85));
+      box-shadow: 0 0 16px rgba(110,220,160,.12);
+    }
+
     .g-foot{
       margin-top: 10px;
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap: 10px;
-      color: rgba(154,167,163,.95);
+      color: rgba(232,242,238,.78);
       font-size: 11px;
-      font-weight: 800;
+      font-weight: 900;
+      opacity: .95;
     }
 
     .error{
@@ -575,19 +699,17 @@
      * =========================
      */
     const CONFIG = {
-      // San Antonio local timezone:
       timezoneLabel: "America/Chicago",
 
       countdowns: [
         { name: "Savannah, Georgia", date: "2026-01-30" },
         { name: "Santa Fe Photo Trip", date: "2026-02-26" },
-        { name: "Splash House", date: "2026-08-08" },
+        { name: "Splash House", date: "2026-08-08" }
       ],
 
       life: {
         dob: "1998-03-30",
         end: "2078-03-30",
-        // true => shows Remaining %, false => shows Lived %
         showRemainingPercent: false
       },
 
@@ -599,15 +721,14 @@
       },
 
       goals: {
-        // File in repo root:
         url: "./goals.json",
-        // Goals don't need frequent refresh; this just helps if browser caches.
         refreshMinutes: 10
       }
     };
 
     // ---------- Utilities ----------
     const pad2 = (n) => String(n).padStart(2, "0");
+    const clampPct = (p) => Math.max(0, Math.min(100, Number(p) || 0));
 
     function formatShortDate(d){
       return d.toLocaleDateString(undefined, { year:"numeric", month:"short", day:"2-digit" });
@@ -864,12 +985,6 @@
     }
 
     // ---------- Goals (goals.json) ----------
-    function clampPct(p){
-      const n = Number(p);
-      if (!Number.isFinite(n)) return 0;
-      return Math.max(0, Math.min(100, n));
-    }
-
     function renderGoals(boardData){
       const titleEl = document.getElementById("goalsTitle");
       const metaEl = document.getElementById("goalsMeta");
@@ -891,6 +1006,7 @@
 
         const colEl = document.createElement("div");
         colEl.className = "g-col";
+        colEl.setAttribute("data-col", col.id || "");
 
         const head = document.createElement("div");
         head.className = "g-colhead";
@@ -947,11 +1063,14 @@
 
           const foot = document.createElement("div");
           foot.className = "g-foot";
+
+          const left = document.createElement("div");
+          left.textContent = "";
+
           const pctEl = document.createElement("div");
           pctEl.textContent = `${pct.toFixed(0)}%`;
-          const spacer = document.createElement("div");
-          spacer.textContent = "";
-          foot.appendChild(spacer);
+
+          foot.appendChild(left);
           foot.appendChild(pctEl);
 
           card.appendChild(row);
@@ -974,7 +1093,6 @@
       const errEl = document.getElementById("goalsError");
 
       try {
-        // Cache-bust so updates show quickly
         const bust = `cb=${Date.now()}`;
         const url = CONFIG.goals.url.includes("?")
           ? `${CONFIG.goals.url}&${bust}`
@@ -997,8 +1115,7 @@
     }
 
     // ---------- Init ----------
-    const tzLabel = document.getElementById("tzLabel");
-    tzLabel.textContent = `TZ: ${CONFIG.timezoneLabel}`;
+    document.getElementById("tzLabel").textContent = `TZ: ${CONFIG.timezoneLabel}`;
 
     const list = document.getElementById("countdownList");
     const cardObjs = CONFIG.countdowns.map(item => {
@@ -1016,13 +1133,8 @@
     refreshWeather();
     refreshGoals();
 
-    // Countdown/Life refresh once per minute
     setInterval(tick, 60 * 1000);
-
-    // Weather refresh
     setInterval(refreshWeather, CONFIG.weather.refreshMinutes * 60 * 1000);
-
-    // Goals refresh (helps if caching happens)
     setInterval(refreshGoals, CONFIG.goals.refreshMinutes * 60 * 1000);
   </script>
 </body>
