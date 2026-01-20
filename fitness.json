@@ -1,0 +1,36 @@
+{
+  "title": "Cut Dashboard",
+  "timezone": "America/Chicago",
+
+  "goals": {
+    "goalWeightLb": 185,
+    "goalBodyFatPct": 10,
+    "eventLabel": "Day Trip / Shirtless Goal",
+    "eventDate": "2026-02-15"
+  },
+
+  "current": {
+    "weightLb": 192,
+    "bodyFatPct": 16
+  },
+
+  "targets": {
+    "calories": 2400,
+    "proteinG": 210,
+    "carbsG": 200,
+    "fatG": 70,
+    "steps": 10000,
+    "cardioMinutes": 60,
+    "waterOz": 120,
+    "sleepHours": 8
+  },
+
+  "weighIns": [
+    { "date": "2026-01-10", "weightLb": 195.0 },
+    { "date": "2026-01-12", "weightLb": 194.2 },
+    { "date": "2026-01-14", "weightLb": 193.6 },
+    { "date": "2026-01-16", "weightLb": 193.1 },
+    { "date": "2026-01-18", "weightLb": 192.6 },
+    { "date": "2026-01-20", "weightLb": 192.0 }
+  ]
+}

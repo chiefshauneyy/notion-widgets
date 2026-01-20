@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cut Dashboard</title>
+  <style>
+    :root{
+      --bg0:#0b0d0c;
+      --text:#e8f2ee;
+      --muted:#9aa7a3;
+      --accent:#a8f0b3;
+      --accent2:#78d98a;
+      --warn:#f5c85a;
+      --shadow: 0 10px 30px rgba(0,0,0,.45);
+      --radius: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background: radial-gradient(1200px 800px at 50% 0%, #141a18 0%, var(--bg0) 55%, #070807 100%);
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding: 20px 18px 26px;
+    }
+
+    .wrap{ width: 980px; max-width: 100%; }
+
+    .header{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,.10);
+    }
+    .header h1{
+      margin:0;
+      font-size: 20px;
+      font-weight: 950;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+    }
+    .meta{
+      color: rgba(154,167,163,.95);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 14px;
+      align-items:start;
+    }
+    @media (max-width: 900px){ .grid{ grid-template-columns: 1fr; } }
+
+    .panel{
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.06);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .titleRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .panel h2{
+      margin:0;
+      font-size: 14px;
+      font-weight: 950;
+      letter-spacing:.2px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      font-size: 11px;
+      font-weight: 900;
+      color: rgba(232,242,238,.92);
+      white-space: nowrap;
+    }
+
+    .cards{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 900px){ .cards{ grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px){ .cards{ grid-template-columns: 1fr; } }
+
+    .kpi{
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(10,12,12,.62);
+      padding: 12px;
+      min-height: 82px;
+    }
+
+    .kpiLabel{
+      color: rgba(154,167,163,.95);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing:.25px;
+      text-transform: uppercase;
+    }
+    .kpiValue{
+      margin-top: 6px;
+      font-size: 22px;
+      font-weight: 1000;
+      letter-spacing:.3px;
+      color: rgba(248,252,250,.96);
+      text-shadow: 0 1px 0 rgba(0,0,0,.55);
+    }
+    .kpiSub{
+      margin-top: 4px;
+      color: rgba(154,167,163,.92);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .bar{
+      margin-top: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.30);
+      border: 1px solid rgba(255,255,255,.10);
+      overflow:hidden;
+    }
+    .bar > div{
+      height:100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(168,240,179,.92), rgba(120,217,138,.92));
+      transition: width .25s ease;
+    }
+
+    .chartWrap{
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(10,12,12,.55);
+      padding: 12px;
+    }
+    canvas{
+      width:100%;
+      height: 210px;
+      display:block;
+    }
+
+    .targets{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+    .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.06);
+      background: rgba(10,12,12,.55);
+      font-size: 12px;
+      font-weight: 900;
+      color: rgba(232,242,238,.92);
+    }
+    .row span{
+      color: rgba(154,167,163,.95);
+      font-weight: 850;
+    }
+
+    .note{
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      color: rgba(154,167,163,.95);
+      font-size: 12px;
+      font-weight: 750;
+      line-height: 1.35;
+    }
+
+    .error{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,80,80,.25);
+      background: rgba(255,80,80,.06);
+      color: rgba(232,242,238,.90);
+      font-size: 12px;
+      font-weight: 750;
+      line-height: 1.35;
+      display:none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="header">
+      <h1>↗ <span id="title">Cut Dashboard</span></h1>
+      <div class="meta" id="meta">Loading…</div>
+    </div>
+
+    <div class="grid">
+      <!-- Left: KPIs + Chart -->
+      <div class="panel">
+        <div class="titleRow">
+          <h2>Progress</h2>
+          <div class="pill" id="eventPill">Event: —</div>
+        </div>
+
+        <div class="cards">
+          <div class="kpi">
+            <div class="kpiLabel">Current weight</div>
+            <div class="kpiValue" id="curW">—</div>
+            <div class="kpiSub" id="curWSub">—</div>
+          </div>
+
+          <div class="kpi">
+            <div class="kpiLabel">Goal weight</div>
+            <div class="kpiValue" id="goalW">—</div>
+            <div class="kpiSub" id="deltaW">—</div>
+          </div>
+
+          <div class="kpi">
+            <div class="kpiLabel">Body fat</div>
+            <div class="kpiValue" id="curBF">—</div>
+            <div class="kpiSub" id="goalBF">—</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <div class="kpiLabel">Cut completion (by goal weight)</div>
+          <div class="bar"><div id="cutFill"></div></div>
+        </div>
+
+        <div style="margin-top:12px;" class="chartWrap">
+          <div class="titleRow" style="margin-bottom:8px;">
+            <h2>Weight trend</h2>
+            <div class="pill" id="trendPill">—</div>
+          </div>
+          <canvas id="chart" width="900" height="260"></canvas>
+          <div class="note" id="chartNote">—</div>
+        </div>
+
+        <div id="errLeft" class="error"></div>
+      </div>
+
+      <!-- Right: Targets -->
+      <div class="panel">
+        <div class="titleRow">
+          <h2>Targets</h2>
+          <div class="pill" id="tzPill">TZ: —</div>
+        </div>
+
+        <div class="targets" id="targets"></div>
+
+        <div class="note">
+          Edit values in <b>fitness.json</b>. Add weigh-ins to see the graph update.
+        </div>
+
+        <div id="errRight" class="error"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CONFIG = {
+      url: "./fitness.json",
+      refreshMinutes: 10
+    };
+
+    const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+    const safeArr = (x) => Array.isArray(x) ? x : [];
+
+    function parseDateYMD(s){
+      // Treat YYYY-MM-DD as local midnight
+      const [y,m,d] = String(s).split("-").map(Number);
+      return new Date(y, (m||1)-1, d||1, 0,0,0,0);
+    }
+
+    function fmtShortDate(d){
+      return d.toLocaleDateString(undefined, { month:"short", day:"2-digit" });
+    }
+
+    function drawChart(points, goalWeight){
+      const canvas = document.getElementById("chart");
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width, h = canvas.height;
+
+      // Clear
+      ctx.clearRect(0,0,w,h);
+
+      // Background subtle
+      ctx.fillStyle = "rgba(0,0,0,.0)";
+      ctx.fillRect(0,0,w,h);
+
+      const padL = 46, padR = 18, padT = 12, padB = 28;
+      const gw = w - padL - padR;
+      const gh = h - padT - padB;
+
+      if(points.length < 2){
+        ctx.fillStyle = "rgba(154,167,163,.95)";
+        ctx.font = "700 14px ui-sans-serif, system-ui";
+        ctx.fillText("Add at least 2 weigh-ins to see the trend.", padL, padT + 24);
+        return;
+      }
+
+      // Sort by date
+      points.sort((a,b)=>a.t - b.t);
+
+      const weights = points.map(p=>p.w);
+      const minW = Math.min(...weights, goalWeight ?? Infinity);
+      const maxW = Math.max(...weights, goalWeight ?? -Infinity);
+
+      // Add padding to y-range
+      const yPad = 1.5;
+      const yMin = minW - yPad;
+      const yMax = maxW + yPad;
+
+      const xMin = points[0].t;
+      const xMax = points[points.length-1].t;
+
+      const x = (t)=> padL + ((t - xMin) / (xMax - xMin)) * gw;
+      const y = (val)=> padT + (1 - ((val - yMin) / (yMax - yMin))) * gh;
+
+      // Gridlines
+      ctx.strokeStyle = "rgba(255,255,255,.06)";
+      ctx.lineWidth = 1;
+
+      for(let i=0;i<=4;i++){
+        const yy = padT + (gh/4)*i;
+        ctx.beginPath();
+        ctx.moveTo(padL, yy);
+        ctx.lineTo(w-padR, yy);
+        ctx.stroke();
+      }
+
+      // Goal line
+      if(Number.isFinite(goalWeight)){
+        const yy = y(goalWeight);
+        ctx.strokeStyle = "rgba(245,200,90,.35)";
+        ctx.setLineDash([6,6]);
+        ctx.beginPath();
+        ctx.moveTo(padL, yy);
+        ctx.lineTo(w-padR, yy);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = "rgba(245,200,90,.92)";
+        ctx.font = "900 12px ui-sans-serif, system-ui";
+        ctx.fillText(`Goal ${goalWeight.toFixed(1)}`, padL + 6, yy - 8);
+      }
+
+      // Line
+      ctx.strokeStyle = "rgba(168,240,179,.92)";
+      ctx.lineWidth = 2;
+
+      ctx.beginPath();
+      points.forEach((p, i)=>{
+        const xx = x(p.t), yy = y(p.w);
+        if(i===0) ctx.moveTo(xx,yy);
+        else ctx.lineTo(xx,yy);
+      });
+      ctx.stroke();
+
+      // Points
+      ctx.fillStyle = "rgba(168,240,179,.95)";
+      points.forEach((p)=>{
+        const xx = x(p.t), yy = y(p.w);
+        ctx.beginPath();
+        ctx.arc(xx, yy, 3, 0, Math.PI*2);
+        ctx.fill();
+      });
+
+      // Axes labels (min/max)
+      ctx.fillStyle = "rgba(154,167,163,.95)";
+      ctx.font = "850 12px ui-sans-serif, system-ui";
+
+      ctx.fillText(`${yMax.toFixed(1)}`, 6, padT + 10);
+      ctx.fillText(`${yMin.toFixed(1)}`, 6, padT + gh);
+
+      // Date labels start/end
+      ctx.fillText(fmtShortDate(new Date(xMin)), padL, padT + gh + 20);
+      const endLabel = fmtShortDate(new Date(xMax));
+      const textW = ctx.measureText(endLabel).width;
+      ctx.fillText(endLabel, w - padR - textW, padT + gh + 20);
+    }
+
+    function sevenDayAvg(points){
+      // Uses last up-to-7 entries (not calendar days). Simple + practical.
+      const last = points.slice(-7);
+      const avg = last.reduce((s,p)=>s+p.w,0)/last.length;
+      return avg;
+    }
+
+    function renderTargets(t){
+      const container = document.getElementById("targets");
+      container.innerHTML = "";
+
+      const rows = [
+        ["Calories", t.calories, "kcal"],
+        ["Protein", t.proteinG, "g"],
+        ["Carbs", t.carbsG, "g"],
+        ["Fat", t.fatG, "g"],
+        ["Steps", t.steps, ""],
+        ["Cardio", t.cardioMinutes, "min"],
+        ["Water", t.waterOz, "oz"],
+        ["Sleep", t.sleepHours, "hrs"]
+      ];
+
+      rows.forEach(([label,val,unit])=>{
+        if(val === undefined || val === null || val === "") return;
+        const el = document.createElement("div");
+        el.className = "row";
+        el.innerHTML = `<div>${label}</div><div><span>${val}</span> ${unit}</div>`;
+        container.appendChild(el);
+      });
+    }
+
+    function setErr(id, msg){
+      const el = document.getElementById(id);
+      el.style.display = "block";
+      el.textContent = msg;
+    }
+    function clearErr(id){
+      const el = document.getElementById(id);
+      el.style.display = "none";
+      el.textContent = "";
+    }
+
+    function calcDaysTo(dateStr){
+      if(!dateStr) return null;
+      const target = parseDateYMD(dateStr);
+      const now = new Date();
+      const ms = target - new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      return Math.ceil(ms / (24*60*60*1000));
+    }
+
+    async function refresh(){
+      clearErr("errLeft");
+      clearErr("errRight");
+
+      try{
+        const bust = `cb=${Date.now()}`;
+        const url = CONFIG.url.includes("?") ? `${CONFIG.url}&${bust}` : `${CONFIG.url}?${bust}`;
+        const res = await fetch(url, { cache:"no-store" });
+        if(!res.ok) throw new Error(`fitness.json fetch failed: ${res.status}`);
+        const data = await res.json();
+
+        // Title/meta
+        document.getElementById("title").textContent = data.title || "Cut Dashboard";
+        document.getElementById("tzPill").textContent = `TZ: ${data.timezone || "—"}`;
+
+        const now = new Date();
+        document.getElementById("meta").textContent =
+          `${now.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"2-digit"})} • updated ${now.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})}`;
+
+        // Event
+        const eventLabel = data?.goals?.eventLabel || "Event";
+        const eventDate = data?.goals?.eventDate;
+        const days = calcDaysTo(eventDate);
+        document.getElementById("eventPill").textContent =
+          (eventDate && Number.isFinite(days))
+            ? `${eventLabel}: ${days}d`
+            : `${eventLabel}: —`;
+
+        // Current & goals
+        const curW = Number(data?.current?.weightLb);
+        const goalW = Number(data?.goals?.goalWeightLb);
+        const curBF = data?.current?.bodyFatPct;
+        const goalBF = data?.goals?.goalBodyFatPct;
+
+        document.getElementById("curW").textContent = Number.isFinite(curW) ? `${curW.toFixed(1)} lb` : "—";
+        document.getElementById("goalW").textContent = Number.isFinite(goalW) ? `${goalW.toFixed(1)} lb` : "—";
+
+        if(Number.isFinite(curW) && Number.isFinite(goalW)){
+          const delta = curW - goalW;
+          document.getElementById("deltaW").textContent = delta > 0 ? `${delta.toFixed(1)} lb to go` : "at/under goal";
+        }else{
+          document.getElementById("deltaW").textContent = "—";
+        }
+
+        document.getElementById("curBF").textContent =
+          (curBF === undefined || curBF === null || curBF === "")
+            ? "—"
+            : `${Number(curBF).toFixed(1)}%`;
+
+        document.getElementById("goalBF").textContent =
+          (goalBF === undefined || goalBF === null || goalBF === "")
+            ? "Goal —"
+            : `Goal ${Number(goalBF).toFixed(1)}%`;
+
+        // Completion bar
+        // Estimate completion using range between highest weigh-in and goal weight (practical for cutting)
+        const weighIns = safeArr(data.weighIns)
+          .filter(x => x && x.date && Number.isFinite(Number(x.weightLb)))
+          .map(x => ({ t: parseDateYMD(x.date).getTime(), w: Number(x.weightLb) }));
+
+        let startW = curW;
+        if(weighIns.length){
+          // use max as "start" (since cut is downward) to avoid weirdness if user edits current
+          startW = Math.max(...weighIns.map(p=>p.w), curW);
+        }
+
+        let completion = 0;
+        if(Number.isFinite(startW) && Number.isFinite(curW) && Number.isFinite(goalW) && startW !== goalW){
+          completion = (startW - curW) / (startW - goalW);
+          completion = clamp(completion, 0, 1);
+        }
+        document.getElementById("cutFill").style.width = `${(completion*100).toFixed(1)}%`;
+
+        // Trend + chart note
+        const chartNote = document.getElementById("chartNote");
+        const trendPill = document.getElementById("trendPill");
+
+        if(weighIns.length >= 2){
+          weighIns.sort((a,b)=>a.t-b.t);
+          const last = weighIns[weighIns.length-1].w;
+          const prev = weighIns[weighIns.length-2].w;
+          const diff = last - prev;
+
+          const avg7 = sevenDayAvg(weighIns);
+          const dir = diff < 0 ? "down" : (diff > 0 ? "up" : "flat");
+
+          trendPill.textContent = `Last: ${diff.toFixed(1)} lb (${dir}) • 7pt avg: ${avg7.toFixed(1)}`;
+          chartNote.textContent =
+            `Tip: add weigh-ins frequently (even 3–4/week). The trend becomes more useful than single-day noise.`;
+
+          drawChart(weighIns, Number.isFinite(goalW) ? goalW : null);
+        }else{
+          trendPill.textContent = "Add weigh-ins";
+          chartNote.textContent = "Add at least 2 weigh-ins in fitness.json to draw the line.";
+          drawChart(weighIns, Number.isFinite(goalW) ? goalW : null);
+        }
+
+        // Targets
+        renderTargets(data.targets || {});
+      }catch(e){
+        setErr("errLeft", "Could not load fitness.json. Make sure it’s in the repo root and GitHub Pages deployed.");
+        setErr("errRight", String(e));
+      }
+    }
+
+    refresh();
+    setInterval(refresh, CONFIG.refreshMinutes * 60 * 1000);
+  </script>
+</body>
+</html>
