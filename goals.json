@@ -29,19 +29,19 @@
         },
         {
           "emoji": "✈️",
-          "title": "Laughlin NV Trip",
+          "title": "Savannah Photo Trip",
           "progress": 0,
-          "meta": "$1,053.83"
+          "meta": "$500"
         },
         {
           "emoji": "✈️",
-          "title": "Day Trip LA",
+          "title": "Santa Fe Photo Trip",
           "progress": 0,
           "meta": "$800"
         },
         {
           "emoji": "💞",
-          "title": "Visit Montana with Reyna",
+          "title": "Visit Hawaii with Alissa",
           "progress": 0,
           "meta": "$3,662"
         }
@@ -53,17 +53,17 @@
       "items": [
         {
           "emoji": "✈️",
-          "title": "Flights",
-          "progress": 0
+          "title": "Spend more time with Dad",
+          "progress": 10
         },
         {
           "emoji": "📚",
-          "title": "Read at least 10 books by end of year",
-          "progress": 0
+          "title": "Create Photography Coffee book by end of year",
+          "progress": 15
         },
         {
           "emoji": "🇫🇷",
-          "title": "Learn French",
+          "title": "Write one chapter of my book a week (2026)",
           "progress": 0
         }
       ]
