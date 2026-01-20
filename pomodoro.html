@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pomodoro</title>
+
+<style>
+:root{
+  --bg0:#0b0d0c;
+  --text:#e8f2ee;
+  --muted:#9aa7a3;
+  --accent:#a8f0b3;
+  --accent2:#78d98a;
+  --warn:#f5c85a;
+  --shadow:0 10px 30px rgba(0,0,0,.45);
+  --radius:18px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  color:var(--text);
+  background:radial-gradient(1200px 800px at 50% 0%,#141a18 0%,var(--bg0) 55%,#070807 100%);
+  display:flex;
+  justify-content:center;
+  padding:20px 18px 26px;
+}
+
+.wrap{width:980px;max-width:100%}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  margin-bottom:12px;
+  border-top:1px solid rgba(255,255,255,.1);
+  padding-top:8px;
+}
+.header h1{
+  margin:0;
+  font-size:20px;
+  font-weight:950;
+  letter-spacing:.2px;
+}
+.meta{
+  font-size:12px;
+  font-weight:800;
+  color:var(--muted);
+  white-space:nowrap;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap:14px;
+}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+.panel{
+  background:rgba(0,0,0,.25);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:var(--radius);
+  padding:16px;
+  box-shadow:var(--shadow);
+}
+
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:4px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.03);
+  font-size:11px;
+  font-weight:900;
+  color:rgba(232,242,238,.92);
+}
+
+.timerWrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:10px;
+}
+
+.timerCard{
+  width:min(520px, 100%);
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(10,12,12,.62);
+  padding:18px 16px 16px;
+  text-align:center;
+}
+
+.phase{
+  font-size:12px;
+  font-weight:950;
+  letter-spacing:.3px;
+  text-transform:uppercase;
+  color:rgba(232,242,238,.86);
+}
+
+.time{
+  margin:10px 0 6px;
+  font-size:72px;
+  font-weight:1000;
+  letter-spacing:2px;
+  line-height:1;
+  text-shadow:0 2px 0 rgba(0,0,0,.55);
+}
+@media(max-width:520px){.time{font-size:56px}}
+
+.sub{
+  color:rgba(154,167,163,.95);
+  font-size:12px;
+  font-weight:850;
+}
+
+.bar{
+  margin-top:14px;
+  height:10px;
+  border-radius:999px;
+  background:rgba(0,0,0,.30);
+  border:1px solid rgba(255,255,255,.10);
+  overflow:hidden;
+}
+.bar>div{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  transition:width .25s ease;
+}
+
+.controls{
+  margin-top:14px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+.btn{
+  appearance:none;
+  border:none;
+  cursor:pointer;
+  padding:10px 14px;
+  border-radius:14px;
+  font-weight:950;
+  font-size:13px;
+  letter-spacing:.2px;
+  color:rgba(248,252,250,.96);
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 8px 18px rgba(0,0,0,.18);
+}
+.btn:hover{background:rgba(255,255,255,.07)}
+.btn.primary{
+  background:rgba(168,240,179,.16);
+  border-color:rgba(168,240,179,.32);
+}
+.btn.warn{
+  background:rgba(245,200,90,.14);
+  border-color:rgba(245,200,90,.26);
+}
+
+.smallTitle{
+  margin:0 0 10px;
+  font-size:14px;
+  font-weight:950;
+  letter-spacing:.2px;
+}
+
+.field{
+  width:100%;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(10,12,12,.62);
+  color:rgba(248,252,250,.96);
+  font-weight:850;
+  outline:none;
+}
+.field::placeholder{color:rgba(154,167,163,.8);font-weight:800}
+
+.kv{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.06);
+  background:rgba(10,12,12,.55);
+  color:rgba(232,242,238,.9);
+  font-size:12px;
+  font-weight:850;
+}
+.kv span{color:rgba(154,167,163,.95);font-weight:850}
+
+.presetRow{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.preset{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.04);
+  cursor:pointer;
+  user-select:none;
+  font-size:12px;
+  font-weight:950;
+}
+.preset:hover{background:rgba(255,255,255,.06)}
+.preset.active{
+  border-color:rgba(168,240,179,.35);
+  background:rgba(168,240,179,.12);
+}
+
+.twoCols{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+@media(max-width:520px){.twoCols{grid-template-columns:1fr}}
+
+.label{
+  font-size:11px;
+  color:rgba(154,167,163,.95);
+  font-weight:900;
+  margin:10px 0 6px;
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>↗ Pomodoro</h1>
+    <div class="meta" id="meta">—</div>
+  </div>
+
+  <div class="grid">
+    <!-- Left: Timer -->
+    <div class="panel">
+      <div class="row">
+        <span class="badge" id="badgePhase">WORK</span>
+        <span class="badge" id="badgePreset">25/5</span>
+        <span class="badge" id="badgeSessions">Sessions: 0</span>
+      </div>
+
+      <div class="timerWrap">
+        <div class="timerCard">
+          <div class="phase" id="phaseText">Work</div>
+          <div class="time" id="timeText">25:00</div>
+          <div class="sub" id="taskText">No task set</div>
+
+          <div class="bar" aria-label="progress">
+            <div id="barFill"></div>
+          </div>
+
+          <div class="controls">
+            <button class="btn primary" id="btnStart">Start</button>
+            <button class="btn" id="btnPause">Pause</button>
+            <button class="btn" id="btnReset">Reset</button>
+            <button class="btn warn" id="btnSkip">Skip</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Settings -->
+    <div class="panel">
+      <div class="smallTitle">Settings</div>
+
+      <div class="label">Current task</div>
+      <input class="field" id="taskInput" placeholder="e.g., Book flights / Write chapter / Code feature" />
+
+      <div class="label">Presets</div>
+      <div class="presetRow" id="presetRow"></div>
+
+      <div class="label">Custom (minutes)</div>
+      <div class="twoCols">
+        <div>
+          <div class="label" style="margin-top:0;">Work</div>
+          <input class="field" id="customWork" inputmode="numeric" placeholder="25" />
+        </div>
+        <div>
+          <div class="label" style="margin-top:0;">Break</div>
+          <input class="field" id="customBreak" inputmode="numeric" placeholder="5" />
+        </div>
+      </div>
+
+      <div class="controls" style="justify-content:flex-start; margin-top:12px;">
+        <button class="btn" id="btnApplyCustom">Apply custom</button>
+      </div>
+
+      <div class="label">Today</div>
+      <div class="kv"><div>Work completed</div><div><span id="minsWork">0</span> min</div></div>
+      <div class="kv" style="margin-top:8px;"><div>Breaks taken</div><div><span id="breaksTaken">0</span></div></div>
+      <div class="kv" style="margin-top:8px;"><div>Last reset</div><div><span id="lastReset">—</span></div></div>
+
+      <div class="controls" style="justify-content:flex-start; margin-top:12px;">
+        <button class="btn" id="btnClearToday">Clear today</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/**
+ * Pomodoro: saved per-day + persists in Notion embed via localStorage.
+ * If audio is blocked in Notion, we still flash UI and update state.
+ */
+
+const PRESETS = [
+  { id:"25_5", label:"25/5", work:25, break:5 },
+  { id:"50_10", label:"50/10", work:50, break:10 },
+  { id:"90_15", label:"90/15", work:90, break:15 },
+];
+
+const todayKey = new Date().toISOString().slice(0,10);
+const STORE_KEY = `pomodoro-${todayKey}`;
+const TASK_KEY = `pomodoro-task`;
+const SETTINGS_KEY = `pomodoro-settings`;
+
+function loadJSON(key, fallback){
+  try{ return JSON.parse(localStorage.getItem(key) || "") ?? fallback; }
+  catch{ return fallback; }
+}
+function saveJSON(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+
+let settings = loadJSON(SETTINGS_KEY, { presetId:"25_5", work:25, break:5 });
+let state = loadJSON(STORE_KEY, {
+  phase:"work",               // work | break
+  remainingSec: settings.work*60,
+  running:false,
+  sessionsCompleted:0,        // completed work sessions
+  workMinutesCompleted:0,
+  breaksTaken:0,
+  lastReset: new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})
+});
+
+let timer = null;
+let totalPhaseSec = (state.phase === "work" ? settings.work*60 : settings.break*60);
+
+const els = {
+  meta: document.getElementById("meta"),
+  badgePhase: document.getElementById("badgePhase"),
+  badgePreset: document.getElementById("badgePreset"),
+  badgeSessions: document.getElementById("badgeSessions"),
+  phaseText: document.getElementById("phaseText"),
+  timeText: document.getElementById("timeText"),
+  taskText: document.getElementById("taskText"),
+  barFill: document.getElementById("barFill"),
+
+  taskInput: document.getElementById("taskInput"),
+  presetRow: document.getElementById("presetRow"),
+  customWork: document.getElementById("customWork"),
+  customBreak: document.getElementById("customBreak"),
+
+  minsWork: document.getElementById("minsWork"),
+  breaksTaken: document.getElementById("breaksTaken"),
+  lastReset: document.getElementById("lastReset"),
+
+  btnStart: document.getElementById("btnStart"),
+  btnPause: document.getElementById("btnPause"),
+  btnReset: document.getElementById("btnReset"),
+  btnSkip: document.getElementById("btnSkip"),
+  btnApplyCustom: document.getElementById("btnApplyCustom"),
+  btnClearToday: document.getElementById("btnClearToday"),
+};
+
+function fmtMMSS(sec){
+  sec = Math.max(0, Math.floor(sec));
+  const m = Math.floor(sec/60);
+  const s = sec%60;
+  return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+
+function beep(){
+  // Simple WebAudio beep (may be blocked in Notion; safe to fail)
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type="sine";
+    o.frequency.value=880;
+    g.gain.value=0.04;
+    o.connect(g); g.connect(ctx.destination);
+    o.start();
+    setTimeout(()=>{o.stop(); ctx.close();}, 160);
+  }catch{}
+}
+
+function save(){
+  saveJSON(STORE_KEY, state);
+  saveJSON(SETTINGS_KEY, settings);
+}
+
+function setMeta(){
+  const date = new Date().toLocaleDateString(undefined,{weekday:"short",month:"short",day:"2-digit"});
+  const run = state.running ? "running" : "paused";
+  els.meta.textContent = `${date} • ${run}`;
+}
+
+function updateBadges(){
+  els.badgePhase.textContent = state.phase.toUpperCase();
+  els.badgePreset.textContent = settings.presetId === "custom"
+    ? `${settings.work}/${settings.break}`
+    : (PRESETS.find(p=>p.id===settings.presetId)?.label || `${settings.work}/${settings.break}`);
+  els.badgeSessions.textContent = `Sessions: ${state.sessionsCompleted}`;
+}
+
+function updateStats(){
+  els.minsWork.textContent = String(state.workMinutesCompleted);
+  els.breaksTaken.textContent = String(state.breaksTaken);
+  els.lastReset.textContent = state.lastReset || "—";
+}
+
+function updateTask(){
+  const task = (localStorage.getItem(TASK_KEY) || "").trim();
+  els.taskInput.value = task;
+  els.taskText.textContent = task ? task : "No task set";
+}
+
+function setTotalForPhase(){
+  totalPhaseSec = (state.phase === "work" ? settings.work*60 : settings.break*60);
+}
+
+function updateUI(){
+  setMeta();
+  updateBadges();
+  updateStats();
+  updateTask();
+
+  els.phaseText.textContent = state.phase === "work" ? "Work" : "Break";
+  els.timeText.textContent = fmtMMSS(state.remainingSec);
+
+  const progress = totalPhaseSec > 0
+    ? (1 - (state.remainingSec / totalPhaseSec))
+    : 0;
+
+  els.barFill.style.width = `${Math.max(0, Math.min(1, progress)) * 100}%`;
+
+  // subtle color shift for break
+  if(state.phase === "break"){
+    els.badgePhase.style.borderColor = "rgba(245,200,90,.35)";
+    els.badgePhase.style.background = "rgba(245,200,90,.12)";
+  }else{
+    els.badgePhase.style.borderColor = "rgba(168,240,179,.35)";
+    els.badgePhase.style.background = "rgba(168,240,179,.12)";
+  }
+
+  els.btnStart.textContent = state.running ? "Running" : "Start";
+}
+
+function stopTimer(){
+  if(timer) clearInterval(timer);
+  timer = null;
+  state.running = false;
+  save();
+  updateUI();
+}
+
+function nextPhase(){
+  // phase completed
+  if(state.phase === "work"){
+    state.sessionsCompleted += 1;
+    state.workMinutesCompleted += settings.work;
+    state.phase = "break";
+    state.breaksTaken += 1;
+  }else{
+    state.phase = "work";
+  }
+  setTotalForPhase();
+  state.remainingSec = totalPhaseSec;
+  beep();
+  flashTitle();
+  save();
+  updateUI();
+}
+
+function flashTitle(){
+  // quick visual cue even if sound blocked
+  const old = document.title;
+  document.title = state.phase === "work" ? "WORK" : "BREAK";
+  setTimeout(()=>{document.title = old;}, 900);
+}
+
+function tick(){
+  if(!state.running) return;
+  state.remainingSec -= 1;
+
+  if(state.remainingSec <= 0){
+    nextPhase();
+  }else{
+    save();
+    updateUI();
+  }
+}
+
+function startTimer(){
+  if(state.running) return;
+  state.running = true;
+  save();
+  updateUI();
+  if(timer) clearInterval(timer);
+  timer = setInterval(tick, 1000);
+}
+
+function resetPhase(){
+  stopTimer();
+  setTotalForPhase();
+  state.remainingSec = totalPhaseSec;
+  save();
+  updateUI();
+}
+
+function skipPhase(){
+  stopTimer();
+  nextPhase();
+}
+
+function setPreset(presetId){
+  const p = PRESETS.find(x=>x.id===presetId);
+  if(!p) return;
+
+  settings = { presetId: p.id, work: p.work, break: p.break };
+  saveJSON(SETTINGS_KEY, settings);
+
+  stopTimer();
+  state.phase = "work";
+  setTotalForPhase();
+  state.remainingSec = totalPhaseSec;
+  save();
+  renderPresets();
+  updateUI();
+}
+
+function applyCustom(){
+  const w = Number(els.customWork.value);
+  const b = Number(els.customBreak.value);
+  if(!Number.isFinite(w) || !Number.isFinite(b) || w <= 0 || b <= 0) return;
+
+  settings = { presetId:"custom", work: Math.round(w), break: Math.round(b) };
+  saveJSON(SETTINGS_KEY, settings);
+
+  stopTimer();
+  state.phase = "work";
+  setTotalForPhase();
+  state.remainingSec = totalPhaseSec;
+  save();
+  renderPresets();
+  updateUI();
+}
+
+function clearToday(){
+  stopTimer();
+  state = {
+    phase:"work",
+    remainingSec: settings.work*60,
+    running:false,
+    sessionsCompleted:0,
+    workMinutesCompleted:0,
+    breaksTaken:0,
+    lastReset: new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})
+  };
+  setTotalForPhase();
+  save();
+  updateUI();
+}
+
+function renderPresets(){
+  els.presetRow.innerHTML = "";
+  PRESETS.forEach(p=>{
+    const el = document.createElement("div");
+    el.className = "preset" + (settings.presetId === p.id ? " active" : "");
+    el.textContent = p.label;
+    el.onclick = ()=> setPreset(p.id);
+    els.presetRow.appendChild(el);
+  });
+
+  // "Custom" chip
+  const customEl = document.createElement("div");
+  customEl.className = "preset" + (settings.presetId === "custom" ? " active" : "");
+  customEl.textContent = "Custom";
+  customEl.onclick = ()=>{
+    els.customWork.focus();
+  };
+  els.presetRow.appendChild(customEl);
+
+  els.customWork.value = String(settings.work);
+  els.customBreak.value = String(settings.break);
+}
+
+function init(){
+  // restore task
+  const task = (localStorage.getItem(TASK_KEY) || "").trim();
+  els.taskInput.value = task;
+
+  // wire events
+  els.btnStart.onclick = startTimer;
+  els.btnPause.onclick = stopTimer;
+  els.btnReset.onclick = resetPhase;
+  els.btnSkip.onclick = skipPhase;
+
+  els.btnApplyCustom.onclick = applyCustom;
+  els.btnClearToday.onclick = clearToday;
+
+  els.taskInput.addEventListener("input", ()=>{
+    localStorage.setItem(TASK_KEY, els.taskInput.value);
+    updateTask();
+  });
+
+  renderPresets();
+
+  setTotalForPhase();
+
+  // ensure remaining seconds isn't out of bounds if settings changed
+  const cap = totalPhaseSec;
+  if(state.remainingSec > cap || state.remainingSec < 0){
+    state.remainingSec = cap;
+  }
+
+  // resume timer if it was running (optional: set to false if you prefer)
+  if(state.running){
+    timer = setInterval(tick, 1000);
+  }
+
+  save();
+  updateUI();
+}
+
+init();
+</script>
+</body>
+</html>
