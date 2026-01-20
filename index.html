@@ -317,27 +317,21 @@
      */
 
     const CONFIG = {
-      // If null, uses the viewer's local timezone.
-      // If set, it just affects the label + formatting (the Date parsing stays local unless you use full ISO with Z).
-      timezoneLabel: null, // e.g. "America/Chicago"
+  // San Antonio is America/Chicago (Central Time)
+  timezoneLabel: "America/Chicago",
 
-      countdowns: [
-        { name: "Savannah, Georgia", date: "2026-02-20" },
-        { name: "Santa Fe Photo Trip", date: "2026-03-05" },
-        { name: "Splash House", date: "2026-07-24" },
-      ],
+  countdowns: [
+    { name: "Savannah, Georgia", date: "2026-01-30" },
+    { name: "Santa Fe Photo Trip", date: "2026-02-26" },
+    { name: "Splash House", date: "2026-08-08" },
+  ],
 
-      life: {
-        // Set these to what you used in Indify (or what you want).
-        // dob: date of birth
-        dob: "1998-01-01",
-        // end: "expected end" date (some people do dob + 80 years, dob + 90 years, etc.)
-        end: "2078-01-01",
-
-        // If you want the bar to show "Remaining" instead of "Lived", set this true:
-        showRemainingPercent: false
-      }
-    };
+  life: {
+    dob: "1998-01-01",
+    end: "2078-01-01",
+    showRemainingPercent: false
+  }
+};
 
     // ---------- Utilities ----------
     const pad2 = (n) => String(n).padStart(2, "0");
