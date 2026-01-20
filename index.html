@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Notion Widgets</title>
+  <style>
+    :root{
+      --bg0:#0b0d0c;
+      --bg1:#121615;
+      --card:#141a18;
+      --muted:#9aa7a3;
+      --text:#e8f2ee;
+      --accent:#a8f0b3;
+      --accent2:#78d98a;
+      --stroke: rgba(168,240,179,.7);
+      --shadow: 0 10px 30px rgba(0,0,0,.45);
+      --radius: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background: radial-gradient(1200px 800px at 50% 0%, #141a18 0%, var(--bg0) 55%, #070807 100%);
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding: 26px 18px;
+    }
+
+    .wrap{
+      width: 980px;
+      max-width: 100%;
+    }
+
+    .top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 20px;
+      margin-bottom: 18px;
+    }
+
+    .title{
+      display:flex;
+      align-items:baseline;
+      gap:14px;
+    }
+    .title h1{
+      margin:0;
+      font-size: 30px;
+      letter-spacing:.3px;
+      font-weight: 800;
+    }
+    .title span{
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing:.2px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap: 20px;
+      align-items:start;
+    }
+
+    @media (max-width: 880px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.06);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+
+    .panel h2{
+      margin: 0 0 14px 0;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing:.2px;
+    }
+
+    /* Countdown list */
+    .countdown-list{
+      display:flex;
+      flex-direction:column;
+      gap: 18px;
+    }
+
+    .cd-card{
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 16px;
+      padding: 16px 16px 14px;
+    }
+
+    .cd-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .cd-name{
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing:.2px;
+    }
+
+    .cd-date{
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .tiles{
+      display:flex;
+      align-items:flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tile{
+      min-width: 76px;
+      text-align:center;
+    }
+
+    .tile .num{
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 10px;
+      padding: 10px 10px;
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-shadow: 0 0 18px rgba(168,240,179,.15);
+    }
+
+    .tile .label{
+      margin-top: 7px;
+      font-size: 12px;
+      color: #cbd7d2;
+      opacity:.9;
+      font-weight: 700;
+      letter-spacing:.3px;
+    }
+
+    .to-go{
+      display:flex;
+      align-items:center;
+      height: 46px;
+      padding: 0 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.06);
+      background: rgba(255,255,255,.03);
+      color: #b7c5c0;
+      font-weight: 750;
+      letter-spacing:.2px;
+      font-size: 13px;
+    }
+
+    /* Life bar */
+    .life{
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+    }
+
+    .life-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .life-box{
+      position: relative;
+      width: 100%;
+      height: 170px;
+      border-radius: 14px;
+      border: 2px solid var(--stroke);
+      background: rgba(0,0,0,.25);
+      overflow: hidden;
+    }
+
+    .life-fill{
+      position:absolute;
+      inset: 0 auto 0 0;
+      width: 35%;
+      background: linear-gradient(180deg, rgba(168,240,179,.95), rgba(120,217,138,.92));
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+    }
+
+    .life-overlay{
+      position:absolute;
+      inset:0;
+      background: linear-gradient(90deg, rgba(255,255,255,.07), rgba(255,255,255,0));
+      pointer-events:none;
+      mix-blend-mode: overlay;
+      opacity:.35;
+    }
+
+    .life-text{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .life-text .pct{
+      color: var(--accent);
+    }
+
+    .small{
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      line-height: 1.35;
+    }
+
+    .hint{
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,.06);
+      color: rgba(154,167,163,.95);
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .tag{
+      display:inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing:.2px;
+      color: #cfe0da;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="title">
+        <h1>Vacation Countdowns</h1>
+        <span class="tag" id="tzLabel">TZ: —</span>
+      </div>
+      <div class="title">
+        <h1>Remaining Life</h1>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <h2>Upcoming trips</h2>
+        <div id="countdownList" class="countdown-list"></div>
+        <div class="hint">
+          Edit trips inside <b>CONFIG.countdowns</b> in the code. Dates are local to your timezone (or set one explicitly).
+        </div>
+      </div>
+
+      <div class="panel life">
+        <h2>Life bar</h2>
+
+        <div class="life-box" aria-label="Life progress bar">
+          <div class="life-fill" id="lifeFill" style="width:35%"></div>
+          <div class="life-overlay"></div>
+        </div>
+
+        <div class="life-text">
+          <div id="lifeSummary">Life: —</div>
+          <div class="pct" id="lifePct">—%</div>
+        </div>
+
+        <div class="life-row">
+          <div id="lifeDates">DOB — → End —</div>
+          <div id="lifeAge">Age —</div>
+        </div>
+
+        <div class="small">
+          This is just a progress visualization: (today - DOB) ÷ (end - DOB). You control the “end” date.
+        </div>
+
+        <div class="hint">
+          Edit <b>CONFIG.life.dob</b> and <b>CONFIG.life.end</b>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * =========================
+     * CONFIG — EDIT THIS
+     * =========================
+     * Tip: Keep dates in YYYY-MM-DD.
+     * If you want an exact time, use YYYY-MM-DDTHH:MM:SS (24h).
+     */
+
+    const CONFIG = {
+      // If null, uses the viewer's local timezone.
+      // If set, it just affects the label + formatting (the Date parsing stays local unless you use full ISO with Z).
+      timezoneLabel: null, // e.g. "America/Chicago"
+
+      countdowns: [
+        { name: "Savannah, Georgia", date: "2026-02-20" },
+        { name: "Santa Fe Photo Trip", date: "2026-03-05" },
+        { name: "Splash House", date: "2026-07-24" },
+      ],
+
+      life: {
+        // Set these to what you used in Indify (or what you want).
+        // dob: date of birth
+        dob: "1998-01-01",
+        // end: "expected end" date (some people do dob + 80 years, dob + 90 years, etc.)
+        end: "2078-01-01",
+
+        // If you want the bar to show "Remaining" instead of "Lived", set this true:
+        showRemainingPercent: false
+      }
+    };
+
+    // ---------- Utilities ----------
+    const pad2 = (n) => String(n).padStart(2, "0");
+
+    function formatShortDate(d){
+      return d.toLocaleDateString(undefined, { year:"numeric", month:"short", day:"2-digit" });
+    }
+
+    function parseLocalDate(input){
+      // Accept YYYY-MM-DD or full ISO. YYYY-MM-DD becomes local midnight.
+      // This avoids timezone confusion for typical “countdown to day” use.
+      if (/^\d{4}-\d{2}-\d{2}$/.test(input)) {
+        const [y,m,day] = input.split("-").map(Number);
+        return new Date(y, m-1, day, 0, 0, 0, 0);
+      }
+      return new Date(input);
+    }
+
+    // Returns { months, weeks, days, isPast }
+    function diffToTarget(now, target){
+      const isPast = now >= target;
+
+      // If past, clamp to 0
+      if (isPast) return { months:0, weeks:0, days:0, isPast:true };
+
+      // We'll compute remaining time in whole days,
+      // then convert to months/weeks/days in a stable "calendar-ish" way.
+      // 1) Count full calendar months until we can't.
+      let months = 0;
+      let cursor = new Date(now.getTime());
+      cursor.setHours(0,0,0,0);
+
+      const tgt = new Date(target.getTime());
+      tgt.setHours(0,0,0,0);
+
+      // Advance month by month
+      while (true) {
+        const next = new Date(cursor.getTime());
+        next.setMonth(next.getMonth() + 1);
+
+        if (next <= tgt) {
+          months++;
+          cursor = next;
+        } else {
+          break;
+        }
+      }
+
+      // 2) Remaining days after months
+      const msPerDay = 24*60*60*1000;
+      const remainingDaysTotal = Math.max(0, Math.floor((tgt - cursor) / msPerDay));
+
+      const weeks = Math.floor(remainingDaysTotal / 7);
+      const days = remainingDaysTotal % 7;
+
+      return { months, weeks, days, isPast:false };
+    }
+
+    function buildCountdownCard(item){
+      const target = parseLocalDate(item.date);
+
+      const card = document.createElement("div");
+      card.className = "cd-card";
+
+      const head = document.createElement("div");
+      head.className = "cd-head";
+
+      const name = document.createElement("div");
+      name.className = "cd-name";
+      name.textContent = item.name;
+
+      const date = document.createElement("div");
+      date.className = "cd-date";
+      date.textContent = formatShortDate(target);
+
+      head.appendChild(name);
+      head.appendChild(date);
+
+      const tiles = document.createElement("div");
+      tiles.className = "tiles";
+
+      const makeTile = (label) => {
+        const t = document.createElement("div");
+        t.className = "tile";
+        const num = document.createElement("div");
+        num.className = "num";
+        num.textContent = "00";
+        const lab = document.createElement("div");
+        lab.className = "label";
+        lab.textContent = label;
+        t.appendChild(num);
+        t.appendChild(lab);
+        return { t, num };
+      };
+
+      const m = makeTile("Months");
+      const w = makeTile("Weeks");
+      const d = makeTile("Days");
+
+      const togo = document.createElement("div");
+      togo.className = "to-go";
+      togo.textContent = "to go";
+
+      tiles.appendChild(m.t);
+      tiles.appendChild(w.t);
+      tiles.appendChild(d.t);
+      tiles.appendChild(togo);
+
+      card.appendChild(head);
+      card.appendChild(tiles);
+
+      return { card, target, nodes: { m:m.num, w:w.num, d:d.num, togo } };
+    }
+
+    function updateCountdown(cardObj){
+      const now = new Date();
+      const diff = diffToTarget(now, cardObj.target);
+      cardObj.nodes.m.textContent = pad2(diff.months);
+      cardObj.nodes.w.textContent = pad2(diff.weeks);
+      cardObj.nodes.d.textContent = pad2(diff.days);
+      cardObj.nodes.togo.textContent = diff.isPast ? "done" : "to go";
+    }
+
+    function updateLife(){
+      const dob = parseLocalDate(CONFIG.life.dob);
+      const end = parseLocalDate(CONFIG.life.end);
+      const now = new Date();
+
+      const total = Math.max(1, end - dob);
+      const lived = Math.min(Math.max(0, now - dob), total);
+
+      const livedPct = (lived / total) * 100;
+      const remainingPct = 100 - livedPct;
+
+      const pct = CONFIG.life.showRemainingPercent ? remainingPct : livedPct;
+
+      const lifeFill = document.getElementById("lifeFill");
+      const lifePctEl = document.getElementById("lifePct");
+      const lifeSummary = document.getElementById("lifeSummary");
+      const lifeDates = document.getElementById("lifeDates");
+      const lifeAge = document.getElementById("lifeAge");
+
+      lifeFill.style.width = `${Math.max(0, Math.min(100, pct)).toFixed(1)}%`;
+      lifePctEl.textContent = `${pct.toFixed(1)}%`;
+
+      const label = CONFIG.life.showRemainingPercent ? "Remaining" : "Lived";
+      lifeSummary.textContent = `${label}: ${pct.toFixed(1)}%`;
+
+      lifeDates.textContent = `DOB ${formatShortDate(dob)} → End ${formatShortDate(end)}`;
+
+      // Age in years (rough but fine)
+      let age = now.getFullYear() - dob.getFullYear();
+      const m = now.getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && now.getDate() < dob.getDate())) age--;
+      lifeAge.textContent = `Age ${age}`;
+    }
+
+    // ---------- Init ----------
+    const tzLabel = document.getElementById("tzLabel");
+    const guessedTZ = Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
+    tzLabel.textContent = `TZ: ${CONFIG.timezoneLabel ?? guessedTZ}`;
+
+    const list = document.getElementById("countdownList");
+    const cardObjs = CONFIG.countdowns.map(item => {
+      const obj = buildCountdownCard(item);
+      list.appendChild(obj.card);
+      return obj;
+    });
+
+    function tick(){
+      cardObjs.forEach(updateCountdown);
+      updateLife();
+    }
+
+    tick();
+    // Refresh once a minute (good enough for month/week/day widgets)
+    setInterval(tick, 60 * 1000);
+  </script>
+</body>
+</html>
