@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Routine Tracker</title>
+
+<style>
+:root{
+  --bg0:#0b0d0c;
+  --text:#e8f2ee;
+  --muted:#9aa7a3;
+  --accent:#a8f0b3;
+  --accent2:#78d98a;
+  --shadow:0 10px 30px rgba(0,0,0,.45);
+  --radius:18px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  color:var(--text);
+  background:radial-gradient(1200px 800px at 50% 0%,#141a18 0%,var(--bg0) 55%,#070807 100%);
+  display:flex;
+  justify-content:center;
+  padding:20px 18px 26px;
+}
+
+.wrap{width:980px;max-width:100%}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  margin-bottom:12px;
+  border-top:1px solid rgba(255,255,255,.1);
+  padding-top:8px;
+}
+
+.header h1{
+  margin:0;
+  font-size:20px;
+  font-weight:950;
+}
+
+.meta{
+  font-size:12px;
+  font-weight:800;
+  color:var(--muted);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+
+.panel{
+  background:rgba(0,0,0,.25);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:var(--radius);
+  padding:14px;
+  box-shadow:var(--shadow);
+}
+
+.panel h2{
+  margin:0 0 10px;
+  font-size:14px;
+  font-weight:950;
+}
+
+.list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px;
+  border-radius:14px;
+  background:rgba(10,12,12,.65);
+  border:1px solid rgba(255,255,255,.08);
+  cursor:pointer;
+}
+
+.item.done{
+  border-color:rgba(168,240,179,.35);
+  background:rgba(168,240,179,.12);
+}
+
+.box{
+  width:18px;
+  height:18px;
+  border-radius:6px;
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(0,0,0,.4);
+  position:relative;
+}
+
+.done .box{
+  background:rgba(168,240,179,.25);
+  border-color:rgba(168,240,179,.5);
+}
+
+.done .box::after{
+  content:"";
+  position:absolute;
+  left:5px;
+  top:2px;
+  width:5px;
+  height:9px;
+  border-right:2px solid rgba(168,240,179,.95);
+  border-bottom:2px solid rgba(168,240,179,.95);
+  transform:rotate(40deg);
+}
+
+.text{
+  font-size:13px;
+  font-weight:850;
+  text-shadow:0 1px 0 rgba(0,0,0,.55);
+}
+
+.bar{
+  margin-top:14px;
+  height:10px;
+  border-radius:999px;
+  background:rgba(0,0,0,.3);
+  border:1px solid rgba(255,255,255,.1);
+  overflow:hidden;
+}
+
+.bar > div{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  transition:width .3s ease;
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>↗ Routine Tracker</h1>
+    <div class="meta" id="meta">—</div>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <h2>AM Routine</h2>
+      <div class="list" id="am"></div>
+    </div>
+
+    <div class="panel">
+      <h2>PM Routine</h2>
+      <div class="list" id="pm"></div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:14px;">
+    <h2>Completion</h2>
+    <div class="bar"><div id="barFill"></div></div>
+  </div>
+</div>
+
+<script>
+const ROUTINES = {
+  am:[
+    "Hydrate (1L)",
+    "Supplements",
+    "Cardio session",
+    "Mobility / stretch"
+  ],
+  pm:[
+    "Lift session",
+    "Read 10–20 min",
+    "Skincare PM",
+    "Prep tomorrow"
+  ]
+};
+
+const todayKey = new Date().toISOString().slice(0,10);
+const storeKey = `routine-${todayKey}`;
+let state = JSON.parse(localStorage.getItem(storeKey) || "{}");
+
+function render(){
+  const amEl = document.getElementById("am");
+  const pmEl = document.getElementById("pm");
+  amEl.innerHTML = "";
+  pmEl.innerHTML = "";
+
+  let done = 0;
+  let total = ROUTINES.am.length + ROUTINES.pm.length;
+
+  function makeItem(text, idx, period){
+    const id = `${period}-${idx}`;
+    const isDone = state[id];
+
+    const el = document.createElement("div");
+    el.className = "item" + (isDone ? " done" : "");
+    el.innerHTML = `<div class="box"></div><div class="text"></div>`;
+    el.querySelector(".text").textContent = text;
+
+    el.onclick = () => {
+      state[id] = !state[id];
+      localStorage.setItem(storeKey, JSON.stringify(state));
+      render();
+    };
+
+    if(isDone) done++;
+    return el;
+  }
+
+  ROUTINES.am.forEach((t,i)=>amEl.appendChild(makeItem(t,i,"am")));
+  ROUTINES.pm.forEach((t,i)=>pmEl.appendChild(makeItem(t,i,"pm")));
+
+  const pct = Math.round((done/total)*100);
+  document.getElementById("barFill").style.width = pct+"%";
+
+  const meta = document.getElementById("meta");
+  const date = new Date().toLocaleDateString(undefined,{weekday:"short",month:"short",day:"2-digit"});
+  meta.textContent = `${date} • ${pct}% complete`;
+}
+
+render();
+</script>
+</body>
+</html>
