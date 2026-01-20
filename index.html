@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Notion Widgets</title>
+  <title>Notion HQ Widgets</title>
   <style>
     :root{
       --bg0:#0b0d0c;
@@ -36,41 +36,106 @@
       max-width: 100%;
     }
 
-    .top{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap: 20px;
+    /* ===== HQ Header ===== */
+    .hq{
+      text-align:center;
       margin-bottom: 18px;
     }
+    .hq-title{
+      margin: 0;
+      font-size: 44px;
+      font-weight: 900;
+      letter-spacing: .8px;
+    }
+    .hq-rule{
+      height: 1px;
+      width: min(720px, 92%);
+      margin: 14px auto 0;
+      background: rgba(255,255,255,.10);
+    }
 
-    .title{
+    /* ===== Weather Row ===== */
+    .weather-row{
+      margin: 22px auto 22px;
+      width: min(720px, 92%);
       display:flex;
-      align-items:baseline;
-      gap:14px;
-    }
-    .title h1{
-      margin:0;
-      font-size: 30px;
-      letter-spacing:.3px;
-      font-weight: 800;
-    }
-    .title span{
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing:.2px;
+      align-items:center;
+      justify-content:center;
+      gap: 18px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.06);
+      background: rgba(0,0,0,.18);
+      box-shadow: 0 6px 18px rgba(0,0,0,.22);
     }
 
+    .w-left{
+      text-align:right;
+      min-width: 180px;
+    }
+    .w-city{
+      font-weight: 900;
+      letter-spacing:.6px;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+    .w-label{
+      font-weight: 800;
+      letter-spacing:.6px;
+      font-size: 11px;
+      color: rgba(232,242,238,.85);
+      opacity:.9;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .w-icon{
+      width: 34px;
+      height: 34px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      opacity: .92;
+      filter: drop-shadow(0 0 10px rgba(168,240,179,.10));
+    }
+
+    .w-right{
+      text-align:left;
+      min-width: 220px;
+      display:flex;
+      flex-direction:column;
+      gap: 2px;
+    }
+    .w-temp{
+      font-size: 26px;
+      font-weight: 950;
+      letter-spacing: .3px;
+      line-height: 1.1;
+    }
+    .w-desc{
+      font-size: 12px;
+      color: rgba(232,242,238,.82);
+      font-weight: 750;
+      letter-spacing: .2px;
+      text-transform: lowercase;
+    }
+    .w-meta{
+      margin-top: 2px;
+      font-size: 11px;
+      color: rgba(154,167,163,.95);
+      font-weight: 700;
+    }
+
+    /* ===== Main layout ===== */
     .grid{
       display:grid;
       grid-template-columns: 1fr 360px;
       gap: 20px;
       align-items:start;
     }
-
     @media (max-width: 880px){
       .grid{ grid-template-columns: 1fr; }
+      .w-left, .w-right{ min-width: unset; }
     }
 
     .panel{
@@ -84,7 +149,7 @@
     .panel h2{
       margin: 0 0 14px 0;
       font-size: 18px;
-      font-weight: 800;
+      font-weight: 900;
       letter-spacing:.2px;
     }
 
@@ -111,7 +176,7 @@
     }
 
     .cd-name{
-      font-weight: 800;
+      font-weight: 900;
       font-size: 18px;
       letter-spacing:.2px;
     }
@@ -119,7 +184,7 @@
     .cd-date{
       color: var(--muted);
       font-size: 12px;
-      font-weight: 650;
+      font-weight: 750;
       white-space: nowrap;
     }
 
@@ -141,7 +206,7 @@
       border-radius: 10px;
       padding: 10px 10px;
       font-size: 28px;
-      font-weight: 900;
+      font-weight: 950;
       letter-spacing: 3px;
       color: var(--accent);
       text-shadow: 0 0 18px rgba(168,240,179,.15);
@@ -152,7 +217,7 @@
       font-size: 12px;
       color: #cbd7d2;
       opacity:.9;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing:.3px;
     }
 
@@ -165,9 +230,10 @@
       border: 1px solid rgba(255,255,255,.06);
       background: rgba(255,255,255,.03);
       color: #b7c5c0;
-      font-weight: 750;
+      font-weight: 850;
       letter-spacing:.2px;
       font-size: 13px;
+      text-transform: lowercase;
     }
 
     /* Life bar */
@@ -184,7 +250,7 @@
       gap: 12px;
       color: var(--muted);
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .life-box{
@@ -220,7 +286,7 @@
       justify-content:space-between;
       gap: 12px;
       font-size: 13px;
-      font-weight: 800;
+      font-weight: 900;
     }
 
     .life-text .pct{
@@ -230,7 +296,7 @@
     .small{
       color: var(--muted);
       font-size: 12px;
-      font-weight: 650;
+      font-weight: 700;
       line-height: 1.35;
     }
 
@@ -240,7 +306,7 @@
       border-top: 1px solid rgba(255,255,255,.06);
       color: rgba(154,167,163,.95);
       font-size: 12px;
-      font-weight: 650;
+      font-weight: 700;
     }
 
     .tag{
@@ -250,36 +316,53 @@
       border: 1px solid rgba(255,255,255,.08);
       background: rgba(255,255,255,.03);
       font-size: 11px;
-      font-weight: 800;
+      font-weight: 900;
       letter-spacing:.2px;
       color: #cfe0da;
+      margin-left: 8px;
     }
   </style>
 </head>
 
 <body>
   <div class="wrap">
-    <div class="top">
-      <div class="title">
-        <h1>Vacation Countdowns</h1>
-        <span class="tag" id="tzLabel">TZ: —</span>
-      </div>
-      <div class="title">
-        <h1>Remaining Life</h1>
+    <!-- HQ Header -->
+    <div class="hq">
+      <h1 class="hq-title">HQ</h1>
+      <div class="hq-rule"></div>
+
+      <!-- Weather -->
+      <div class="weather-row" aria-label="San Antonio weather">
+        <div class="w-left">
+          <div class="w-city">SAN ANTONIO</div>
+          <div class="w-label">WEATHER</div>
+        </div>
+
+        <div class="w-icon" id="weatherIcon" aria-hidden="true"></div>
+
+        <div class="w-right">
+          <div class="w-temp" id="weatherTemp">— °F</div>
+          <div class="w-desc" id="weatherDesc">loading…</div>
+          <div class="w-meta">
+            <span id="tzLabel" class="tag">TZ: —</span>
+            <span id="weatherUpdated" class="tag">Updated: —</span>
+          </div>
+        </div>
       </div>
     </div>
 
+    <!-- Main grid -->
     <div class="grid">
       <div class="panel">
-        <h2>Upcoming trips</h2>
+        <h2>Vacation Countdowns</h2>
         <div id="countdownList" class="countdown-list"></div>
         <div class="hint">
-          Edit trips inside <b>CONFIG.countdowns</b> in the code. Dates are local to your timezone (or set one explicitly).
+          Edit trips inside <b>CONFIG.countdowns</b> in the code.
         </div>
       </div>
 
       <div class="panel life">
-        <h2>Life bar</h2>
+        <h2>Remaining Life</h2>
 
         <div class="life-box" aria-label="Life progress bar">
           <div class="life-fill" id="lifeFill" style="width:35%"></div>
@@ -297,7 +380,7 @@
         </div>
 
         <div class="small">
-          This is just a progress visualization: (today - DOB) ÷ (end - DOB). You control the “end” date.
+          This is a visualization: (today - DOB) ÷ (end - DOB). You control the end date.
         </div>
 
         <div class="hint">
@@ -312,26 +395,33 @@
      * =========================
      * CONFIG — EDIT THIS
      * =========================
-     * Tip: Keep dates in YYYY-MM-DD.
-     * If you want an exact time, use YYYY-MM-DDTHH:MM:SS (24h).
      */
-
     const CONFIG = {
-  // San Antonio is America/Chicago (Central Time)
-  timezoneLabel: "America/Chicago",
+      // San Antonio local timezone:
+      timezoneLabel: "America/Chicago",
 
-  countdowns: [
-    { name: "Savannah, Georgia", date: "2026-01-30" },
-    { name: "Santa Fe Photo Trip", date: "2026-02-26" },
-    { name: "Splash House", date: "2026-08-08" },
-  ],
+      countdowns: [
+        { name: "Savannah, Georgia", date: "2026-01-30" },
+        { name: "Santa Fe Photo Trip", date: "2026-02-26" },
+        { name: "Splash House", date: "2026-08-08" },
+      ],
 
-  life: {
-    dob: "1998-03-30",
-    end: "2078-01-01",
-    showRemainingPercent: false
-  }
-};
+      life: {
+        dob: "1998-03-30",
+        // Change this if you used something else in Indify (e.g., dob + 80 years)
+        end: "2078-03-30",
+        // true => shows Remaining % instead of Lived %
+        showRemainingPercent: true
+      },
+
+      weather: {
+        cityLabel: "San Antonio",
+        // San Antonio, TX
+        latitude: 29.4241,
+        longitude: -98.4936,
+        refreshMinutes: 15
+      }
+    };
 
     // ---------- Utilities ----------
     const pad2 = (n) => String(n).padStart(2, "0");
@@ -341,8 +431,7 @@
     }
 
     function parseLocalDate(input){
-      // Accept YYYY-MM-DD or full ISO. YYYY-MM-DD becomes local midnight.
-      // This avoids timezone confusion for typical “countdown to day” use.
+      // YYYY-MM-DD becomes local midnight (good for “countdown to day”)
       if (/^\d{4}-\d{2}-\d{2}$/.test(input)) {
         const [y,m,day] = input.split("-").map(Number);
         return new Date(y, m-1, day, 0, 0, 0, 0);
@@ -353,13 +442,8 @@
     // Returns { months, weeks, days, isPast }
     function diffToTarget(now, target){
       const isPast = now >= target;
-
-      // If past, clamp to 0
       if (isPast) return { months:0, weeks:0, days:0, isPast:true };
 
-      // We'll compute remaining time in whole days,
-      // then convert to months/weeks/days in a stable "calendar-ish" way.
-      // 1) Count full calendar months until we can't.
       let months = 0;
       let cursor = new Date(now.getTime());
       cursor.setHours(0,0,0,0);
@@ -367,23 +451,17 @@
       const tgt = new Date(target.getTime());
       tgt.setHours(0,0,0,0);
 
-      // Advance month by month
       while (true) {
         const next = new Date(cursor.getTime());
         next.setMonth(next.getMonth() + 1);
-
         if (next <= tgt) {
           months++;
           cursor = next;
-        } else {
-          break;
-        }
+        } else break;
       }
 
-      // 2) Remaining days after months
       const msPerDay = 24*60*60*1000;
       const remainingDaysTotal = Math.max(0, Math.floor((tgt - cursor) / msPerDay));
-
       const weeks = Math.floor(remainingDaysTotal / 7);
       const days = remainingDaysTotal % 7;
 
@@ -482,17 +560,134 @@
 
       lifeDates.textContent = `DOB ${formatShortDate(dob)} → End ${formatShortDate(end)}`;
 
-      // Age in years (rough but fine)
       let age = now.getFullYear() - dob.getFullYear();
       const m = now.getMonth() - dob.getMonth();
       if (m < 0 || (m === 0 && now.getDate() < dob.getDate())) age--;
       lifeAge.textContent = `Age ${age}`;
     }
 
+    // ---------- Weather (Open-Meteo, no key) ----------
+    function weatherCodeToText(code){
+      // Open-Meteo WMO codes (common groupings)
+      if (code === 0) return "clear sky";
+      if (code === 1) return "mainly clear";
+      if (code === 2) return "partly cloudy";
+      if (code === 3) return "overcast clouds";
+      if (code === 45 || code === 48) return "fog";
+      if (code === 51 || code === 53 || code === 55) return "drizzle";
+      if (code === 56 || code === 57) return "freezing drizzle";
+      if (code === 61 || code === 63 || code === 65) return "rain";
+      if (code === 66 || code === 67) return "freezing rain";
+      if (code === 71 || code === 73 || code === 75) return "snow";
+      if (code === 77) return "snow grains";
+      if (code === 80 || code === 81 || code === 82) return "rain showers";
+      if (code === 85 || code === 86) return "snow showers";
+      if (code === 95) return "thunderstorm";
+      if (code === 96 || code === 99) return "thunderstorm w/ hail";
+      return "conditions";
+    }
+
+    function iconSVG(kind){
+      // Minimal inline SVG icons in your accent vibe
+      const stroke = "rgba(232,242,238,.85)";
+      const fill = "rgba(232,242,238,.18)";
+      const accent = "rgba(168,240,179,.85)";
+
+      if (kind === "sun") {
+        return `
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="4.5" stroke="${accent}" stroke-width="1.6"/>
+            <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M19.8 4.2l-2.1 2.1M6.3 17.7l-2.1 2.1"
+              stroke="${stroke}" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>`;
+      }
+
+      if (kind === "cloud") {
+        return `
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M8.5 18h9a4 4 0 0 0 .7-7.94A5.5 5.5 0 0 0 7.2 8.8 3.8 3.8 0 0 0 8.5 18Z"
+              fill="${fill}" stroke="${stroke}" stroke-width="1.2" />
+          </svg>`;
+      }
+
+      if (kind === "rain") {
+        return `
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M8.5 14.5h9a3.5 3.5 0 0 0 .6-6.95A5 5 0 0 0 7.3 6.6 3.3 3.3 0 0 0 8.5 14.5Z"
+              fill="${fill}" stroke="${stroke}" stroke-width="1.2" />
+            <path d="M9 17l-1 2M13 17l-1 2M17 17l-1 2" stroke="${accent}" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>`;
+      }
+
+      if (kind === "storm") {
+        return `
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M8.5 14.5h9a3.5 3.5 0 0 0 .6-6.95A5 5 0 0 0 7.3 6.6 3.3 3.3 0 0 0 8.5 14.5Z"
+              fill="${fill}" stroke="${stroke}" stroke-width="1.2" />
+            <path d="M12 14.8l-2 3h2l-1 2.8 3-4h-2l1-1.8Z" fill="${accent}" />
+          </svg>`;
+      }
+
+      // default
+      return iconSVG("cloud");
+    }
+
+    function pickIcon(weatherCode){
+      if (weatherCode === 0 || weatherCode === 1) return "sun";
+      if (weatherCode === 2 || weatherCode === 3 || weatherCode === 45 || weatherCode === 48) return "cloud";
+      if ([51,53,55,56,57,61,63,65,66,67,80,81,82,71,73,75,77,85,86].includes(weatherCode)) return "rain";
+      if ([95,96,99].includes(weatherCode)) return "storm";
+      return "cloud";
+    }
+
+    async function refreshWeather(){
+      const tempEl = document.getElementById("weatherTemp");
+      const descEl = document.getElementById("weatherDesc");
+      const iconEl = document.getElementById("weatherIcon");
+      const updatedEl = document.getElementById("weatherUpdated");
+
+      try {
+        const lat = CONFIG.weather.latitude;
+        const lon = CONFIG.weather.longitude;
+        const tz = encodeURIComponent(CONFIG.timezoneLabel);
+
+        const url =
+          `https://api.open-meteo.com/v1/forecast` +
+          `?latitude=${lat}&longitude=${lon}` +
+          `&current=temperature_2m,weather_code` +
+          `&temperature_unit=fahrenheit` +
+          `&timezone=${tz}`;
+
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error(`Weather fetch failed: ${res.status}`);
+        const data = await res.json();
+
+        const t = data?.current?.temperature_2m;
+        const code = data?.current?.weather_code;
+
+        if (typeof t !== "number" || typeof code !== "number") {
+          throw new Error("Weather data missing fields");
+        }
+
+        tempEl.textContent = `${Math.round(t)} °F`;
+        descEl.textContent = weatherCodeToText(code);
+
+        const iconKind = pickIcon(code);
+        iconEl.innerHTML = iconSVG(iconKind);
+
+        const now = new Date();
+        updatedEl.textContent = `Updated: ${now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+      } catch (e) {
+        // Fail gracefully
+        descEl.textContent = "weather unavailable";
+        iconEl.innerHTML = iconSVG("cloud");
+        updatedEl.textContent = "Updated: —";
+      }
+    }
+
     // ---------- Init ----------
     const tzLabel = document.getElementById("tzLabel");
-    const guessedTZ = Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
-    tzLabel.textContent = `TZ: ${CONFIG.timezoneLabel ?? guessedTZ}`;
+    tzLabel.textContent = `TZ: ${CONFIG.timezoneLabel}`;
 
     const list = document.getElementById("countdownList");
     const cardObjs = CONFIG.countdowns.map(item => {
@@ -507,8 +702,13 @@
     }
 
     tick();
-    // Refresh once a minute (good enough for month/week/day widgets)
+    refreshWeather();
+
+    // Countdown/Life refresh once per minute
     setInterval(tick, 60 * 1000);
+
+    // Weather refresh every N minutes
+    setInterval(refreshWeather, CONFIG.weather.refreshMinutes * 60 * 1000);
   </script>
 </body>
 </html>
