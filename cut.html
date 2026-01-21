@@ -21,7 +21,7 @@
 *{box-sizing:border-box}
 body{
   margin:0;
-  font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
   color:var(--text);
   background:radial-gradient(1200px 800px at 50% 0%,#141a18 0%,var(--bg0) 55%,#070807 100%);
   display:flex;
@@ -43,17 +43,20 @@ body{
   margin:0;
   font-size:20px;
   font-weight:950;
+  letter-spacing:.2px;
 }
 .meta{
   font-size:12px;
   font-weight:800;
   color:var(--muted);
+  white-space:nowrap;
 }
 
 .grid{
   display:grid;
   grid-template-columns:1.25fr .75fr;
   gap:14px;
+  align-items:start;
 }
 @media(max-width:900px){.grid{grid-template-columns:1fr}}
 
@@ -69,6 +72,7 @@ h2{
   margin:0 0 10px;
   font-size:14px;
   font-weight:950;
+  letter-spacing:.2px;
 }
 
 .cards{
@@ -88,15 +92,44 @@ h2{
   font-size:11px;
   font-weight:900;
   color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.25px;
 }
 .kpiValue{
   font-size:22px;
   font-weight:1000;
   margin-top:4px;
+  color:rgba(248,252,250,.96);
+  text-shadow:0 1px 0 rgba(0,0,0,.55);
 }
 .kpiSub{
   font-size:12px;
   color:var(--muted);
+  font-weight:850;
+  margin-top:4px;
+}
+
+.pillRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-top:12px;
+  flex-wrap:wrap;
+}
+
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:4px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.03);
+  font-size:11px;
+  font-weight:900;
+  color:rgba(232,242,238,.92);
+  white-space:nowrap;
 }
 
 .pace{
@@ -105,12 +138,37 @@ h2{
   border-radius:14px;
   background:rgba(10,12,12,.65);
   border:1px solid rgba(255,255,255,.08);
+  font-size:12px;
+  font-weight:900;
+  color:rgba(232,242,238,.92);
 }
-.pace.good{border-color:rgba(168,240,179,.4)}
-.pace.warn{border-color:rgba(245,200,90,.4)}
-.pace.bad{border-color:rgba(255,123,123,.4)}
+.pace strong{font-weight:1000}
+.pace.good{border-color:rgba(168,240,179,.40)}
+.pace.warn{border-color:rgba(245,200,90,.40)}
+.pace.bad{border-color:rgba(255,123,123,.40)}
 
-.pace strong{font-weight:950}
+.chartWrap{
+  margin-top:12px;
+  border-radius:14px;
+  background:rgba(10,12,12,.65);
+  border:1px solid rgba(255,255,255,.08);
+  padding:12px;
+}
+canvas{
+  width:100%;
+  height:220px;
+  display:block;
+}
+
+.note{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid rgba(255,255,255,.08);
+  color:rgba(154,167,163,.95);
+  font-size:12px;
+  font-weight:750;
+  line-height:1.35;
+}
 
 .checkins{
   display:grid;
@@ -125,16 +183,27 @@ h2{
   border-radius:14px;
   padding:10px;
   font-size:12px;
+  font-weight:900;
+  color:rgba(232,242,238,.92);
 }
-.check input, .check select{
+.check label{
+  display:block;
+  font-size:11px;
+  color:var(--muted);
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.25px;
+}
+.check input,.check select{
   width:100%;
   margin-top:6px;
-  background:rgba(0,0,0,.5);
+  background:rgba(0,0,0,.50);
   border:1px solid rgba(255,255,255,.15);
   border-radius:10px;
-  padding:6px 8px;
+  padding:8px 10px;
   color:var(--text);
-  font-weight:800;
+  font-weight:850;
+  outline:none;
 }
 
 .save{
@@ -142,12 +211,38 @@ h2{
   padding:10px;
   border-radius:14px;
   background:rgba(168,240,179,.18);
-  border:1px solid rgba(168,240,179,.4);
+  border:1px solid rgba(168,240,179,.40);
   text-align:center;
   font-weight:950;
   cursor:pointer;
+  user-select:none;
 }
 .save:hover{background:rgba(168,240,179,.25)}
+
+.toast{
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:14px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.10);
+  color:rgba(232,242,238,.92);
+  font-size:12px;
+  font-weight:800;
+  display:none;
+}
+
+.error{
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,80,80,.25);
+  background:rgba(255,80,80,.06);
+  color:rgba(232,242,238,.90);
+  font-size:12px;
+  font-weight:750;
+  line-height:1.35;
+  display:none;
+}
 </style>
 </head>
 
@@ -155,22 +250,27 @@ h2{
 <div class="wrap">
   <div class="header">
     <h1>↗ Cut Dashboard</h1>
-    <div class="meta" id="meta">—</div>
+    <div class="meta" id="meta">Loading…</div>
   </div>
 
   <div class="grid">
     <!-- LEFT -->
     <div class="panel">
       <h2>Progress</h2>
+
       <div class="cards">
         <div class="kpi">
           <div class="kpiLabel">Current weight</div>
           <div class="kpiValue" id="curW">—</div>
+          <div class="kpiSub" id="curWSub">—</div>
         </div>
+
         <div class="kpi">
           <div class="kpiLabel">Goal weight</div>
           <div class="kpiValue" id="goalW">—</div>
+          <div class="kpiSub" id="deltaW">—</div>
         </div>
+
         <div class="kpi">
           <div class="kpiLabel">Remaining</div>
           <div class="kpiValue" id="remainW">—</div>
@@ -178,10 +278,22 @@ h2{
         </div>
       </div>
 
-      <div class="pace" id="paceBox">
-        <strong>Goal pace:</strong>
-        <span id="paceText">—</span>
+      <div class="pillRow">
+        <div class="pill" id="eventPill">Event: —</div>
+        <div class="pill" id="trendPill">Trend: —</div>
       </div>
+
+      <div class="pace" id="paceBox">
+        <strong>Goal pace:</strong> <span id="paceText">—</span>
+        <span style="color:rgba(154,167,163,.95); font-weight:850;"> • (lbs/week needed)</span>
+      </div>
+
+      <div class="chartWrap">
+        <canvas id="chart" width="900" height="260"></canvas>
+        <div class="note" id="chartNote">Add weigh-ins in <b>fitness.json</b> to populate the graph.</div>
+      </div>
+
+      <div id="errLeft" class="error"></div>
     </div>
 
     <!-- RIGHT -->
@@ -190,31 +302,42 @@ h2{
 
       <div class="checkins">
         <div class="check">
-          Alcohol
+          <label>Alcohol</label>
           <select id="alcohol">
             <option>No</option>
             <option>Yes</option>
           </select>
         </div>
+
         <div class="check">
-          Avg Sleep (hrs)
-          <input id="sleep" type="number" step=".1">
+          <label>Avg Sleep (hrs)</label>
+          <input id="sleep" type="number" step=".1" placeholder="7.5">
         </div>
+
         <div class="check">
-          Avg Steps
-          <input id="steps" type="number">
+          <label>Avg Steps</label>
+          <input id="steps" type="number" placeholder="10000">
         </div>
+
         <div class="check">
-          Training Days
-          <input id="training" type="number">
+          <label>Training Days</label>
+          <input id="training" type="number" placeholder="5">
         </div>
+
         <div class="check" style="grid-column:1/-1">
-          Notes
+          <label>Notes</label>
           <input id="notes" placeholder="Energy, hunger, stress…">
         </div>
       </div>
 
-      <div class="save" onclick="saveWeek()">Save Weekly Check-In</div>
+      <div class="save" id="btnSave">Save Weekly Check-In</div>
+      <div class="toast" id="toast">Saved.</div>
+
+      <div class="note">
+        Weekly check-ins save locally (per week). This keeps it fast in Notion.
+      </div>
+
+      <div id="errRight" class="error"></div>
     </div>
   </div>
 </div>
@@ -222,64 +345,249 @@ h2{
 <script>
 const FITNESS_URL = "./fitness.json";
 
+const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+const safeArr = (x) => Array.isArray(x) ? x : [];
+
+function parseDateYMD(s){
+  const [y,m,d] = String(s).split("-").map(Number);
+  return new Date(y, (m||1)-1, d||1, 0,0,0,0);
+}
+function fmtShortDate(d){
+  return d.toLocaleDateString(undefined, { month:"short", day:"2-digit" });
+}
+function calcDaysTo(dateStr){
+  if(!dateStr) return null;
+  const target = parseDateYMD(dateStr);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.ceil((target - today) / 86400000);
+}
+function sevenPointAvg(points){
+  const last = points.slice(-7);
+  const avg = last.reduce((s,p)=>s+p.w,0)/last.length;
+  return avg;
+}
+
+function drawChart(points, goalWeight){
+  const canvas = document.getElementById("chart");
+  const ctx = canvas.getContext("2d");
+  const w = canvas.width, h = canvas.height;
+
+  ctx.clearRect(0,0,w,h);
+
+  const padL = 46, padR = 18, padT = 12, padB = 28;
+  const gw = w - padL - padR;
+  const gh = h - padT - padB;
+
+  // empty state
+  if(points.length < 2){
+    ctx.fillStyle = "rgba(154,167,163,.95)";
+    ctx.font = "700 14px ui-sans-serif, system-ui";
+    ctx.fillText("Add at least 2 weigh-ins to see the trend.", padL, padT + 24);
+    return;
+  }
+
+  points.sort((a,b)=>a.t-b.t);
+  const weights = points.map(p=>p.w);
+
+  const minW = Math.min(...weights, Number.isFinite(goalWeight) ? goalWeight : Infinity);
+  const maxW = Math.max(...weights, Number.isFinite(goalWeight) ? goalWeight : -Infinity);
+
+  const yPad = 1.5;
+  const yMin = minW - yPad;
+  const yMax = maxW + yPad;
+
+  const xMin = points[0].t;
+  const xMax = points[points.length-1].t;
+
+  const x = (t)=> padL + ((t - xMin) / (xMax - xMin)) * gw;
+  const y = (val)=> padT + (1 - ((val - yMin) / (yMax - yMin))) * gh;
+
+  // grid
+  ctx.strokeStyle = "rgba(255,255,255,.06)";
+  ctx.lineWidth = 1;
+  for(let i=0;i<=4;i++){
+    const yy = padT + (gh/4)*i;
+    ctx.beginPath();
+    ctx.moveTo(padL, yy);
+    ctx.lineTo(w-padR, yy);
+    ctx.stroke();
+  }
+
+  // goal line
+  if(Number.isFinite(goalWeight)){
+    const yy = y(goalWeight);
+    ctx.strokeStyle = "rgba(245,200,90,.35)";
+    ctx.setLineDash([6,6]);
+    ctx.beginPath();
+    ctx.moveTo(padL, yy);
+    ctx.lineTo(w-padR, yy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = "rgba(245,200,90,.92)";
+    ctx.font = "900 12px ui-sans-serif, system-ui";
+    ctx.fillText(`Goal ${goalWeight.toFixed(1)}`, padL + 6, yy - 8);
+  }
+
+  // line
+  ctx.strokeStyle = "rgba(168,240,179,.92)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  points.forEach((p, i)=>{
+    const xx = x(p.t), yy = y(p.w);
+    if(i===0) ctx.moveTo(xx,yy);
+    else ctx.lineTo(xx,yy);
+  });
+  ctx.stroke();
+
+  // points
+  ctx.fillStyle = "rgba(168,240,179,.95)";
+  points.forEach((p)=>{
+    const xx = x(p.t), yy = y(p.w);
+    ctx.beginPath();
+    ctx.arc(xx, yy, 3, 0, Math.PI*2);
+    ctx.fill();
+  });
+
+  // axes labels
+  ctx.fillStyle = "rgba(154,167,163,.95)";
+  ctx.font = "850 12px ui-sans-serif, system-ui";
+  ctx.fillText(`${yMax.toFixed(1)}`, 6, padT + 10);
+  ctx.fillText(`${yMin.toFixed(1)}`, 6, padT + gh);
+
+  // start/end dates
+  ctx.fillText(fmtShortDate(new Date(xMin)), padL, padT + gh + 20);
+  const endLabel = fmtShortDate(new Date(xMax));
+  const textW = ctx.measureText(endLabel).width;
+  ctx.fillText(endLabel, w - padR - textW, padT + gh + 20);
+}
+
+/* Weekly check-in local storage */
 function mondayKey(){
-  const d=new Date();
-  const day=d.getDay()||7;
-  d.setDate(d.getDate()-day+1);
+  const d = new Date();
+  const day = d.getDay() || 7;
+  d.setDate(d.getDate() - day + 1);
+  d.setHours(0,0,0,0);
   return d.toISOString().slice(0,10);
 }
-const WEEK_KEY="cut-week-"+mondayKey();
-
-function saveWeek(){
-  const data={
-    alcohol:alcohol.value,
-    sleep:sleep.value,
-    steps:steps.value,
-    training:training.value,
-    notes:notes.value
-  };
-  localStorage.setItem(WEEK_KEY,JSON.stringify(data));
-  alert("Weekly check-in saved");
-}
+const WEEK_KEY = "cut-week-" + mondayKey();
 
 function loadWeek(){
-  const d=JSON.parse(localStorage.getItem(WEEK_KEY)||"{}");
-  alcohol.value=d.alcohol||"No";
-  sleep.value=d.sleep||"";
-  steps.value=d.steps||"";
-  training.value=d.training||"";
-  notes.value=d.notes||"";
+  const raw = localStorage.getItem(WEEK_KEY);
+  const d = raw ? JSON.parse(raw) : {};
+  document.getElementById("alcohol").value = d.alcohol || "No";
+  document.getElementById("sleep").value = d.sleep || "";
+  document.getElementById("steps").value = d.steps || "";
+  document.getElementById("training").value = d.training || "";
+  document.getElementById("notes").value = d.notes || "";
 }
+function saveWeek(){
+  const data = {
+    alcohol: document.getElementById("alcohol").value,
+    sleep: document.getElementById("sleep").value,
+    steps: document.getElementById("steps").value,
+    training: document.getElementById("training").value,
+    notes: document.getElementById("notes").value
+  };
+  localStorage.setItem(WEEK_KEY, JSON.stringify(data));
+  const toast = document.getElementById("toast");
+  toast.style.display = "block";
+  toast.textContent = "Saved.";
+  setTimeout(()=>toast.style.display="none", 1200);
+}
+
+document.getElementById("btnSave").addEventListener("click", saveWeek);
 
 async function init(){
-  const res=await fetch(FITNESS_URL);
-  const data=await res.json();
-
-  const cur=data.current.weightLb;
-  const goal=data.goals.goalWeightLb;
-  const event=new Date(data.goals.eventDate);
-  const now=new Date();
-  const days=Math.max(1,Math.ceil((event-now)/(86400000)));
-  const lbsLeft=(cur-goal).toFixed(1);
-  const pace=(lbsLeft/(days/7)).toFixed(2);
-
-  curW.textContent=cur+" lb";
-  goalW.textContent=goal+" lb";
-  remainW.textContent=lbsLeft+" lb";
-  daysLeft.textContent=days+" days remaining";
-
-  paceText.textContent=pace+" lb / week";
-
-  const box=document.getElementById("paceBox");
-  if(pace<=1) box.classList.add("good");
-  else if(pace<=1.5) box.classList.add("warn");
-  else box.classList.add("bad");
-
-  meta.textContent=new Date().toLocaleDateString(undefined,{weekday:"short",month:"short",day:"2-digit"});
   loadWeek();
+
+  const res = await fetch(FITNESS_URL, { cache:"no-store" });
+  const data = await res.json();
+
+  // meta
+  const now = new Date();
+  document.getElementById("meta").textContent =
+    `${now.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"2-digit"})}`;
+
+  const cur = Number(data?.current?.weightLb);
+  const goal = Number(data?.goals?.goalWeightLb);
+
+  // weigh-ins -> points
+  const weighIns = safeArr(data.weighIns)
+    .filter(x => x && x.date && Number.isFinite(Number(x.weightLb)))
+    .map(x => ({ t: parseDateYMD(x.date).getTime(), w: Number(x.weightLb) }))
+    .sort((a,b)=>a.t-b.t);
+
+  // show current from JSON (and also note latest weigh-in if present)
+  document.getElementById("curW").textContent = Number.isFinite(cur) ? `${cur.toFixed(1)} lb` : "—";
+  if(weighIns.length){
+    const latest = weighIns[weighIns.length-1].w;
+    document.getElementById("curWSub").textContent = `Latest weigh-in: ${latest.toFixed(1)} lb`;
+  }else{
+    document.getElementById("curWSub").textContent = "Add weigh-ins to show trend";
+  }
+
+  document.getElementById("goalW").textContent = Number.isFinite(goal) ? `${goal.toFixed(1)} lb` : "—";
+
+  if(Number.isFinite(cur) && Number.isFinite(goal)){
+    const delta = cur - goal;
+    document.getElementById("deltaW").textContent = delta > 0 ? `${delta.toFixed(1)} lb to go` : "at/under goal";
+    document.getElementById("remainW").textContent = `${Math.max(0, delta).toFixed(1)} lb`;
+  }else{
+    document.getElementById("deltaW").textContent = "—";
+    document.getElementById("remainW").textContent = "—";
+  }
+
+  // event days / pace
+  const eventLabel = data?.goals?.eventLabel || "Event";
+  const eventDate = data?.goals?.eventDate;
+  const days = calcDaysTo(eventDate);
+  document.getElementById("eventPill").textContent =
+    (eventDate && Number.isFinite(days)) ? `${eventLabel}: ${days}d` : `${eventLabel}: —`;
+
+  if(Number.isFinite(cur) && Number.isFinite(goal) && Number.isFinite(days) && days > 0){
+    const lbsLeft = Math.max(0, cur - goal);
+    const pace = lbsLeft / (days / 7);
+    document.getElementById("daysLeft").textContent = `${days} days remaining`;
+    document.getElementById("paceText").textContent = `${pace.toFixed(2)} lb / week`;
+
+    const box = document.getElementById("paceBox");
+    box.classList.remove("good","warn","bad");
+    if(pace <= 1.0) box.classList.add("good");
+    else if(pace <= 1.5) box.classList.add("warn");
+    else box.classList.add("bad");
+  }else{
+    document.getElementById("daysLeft").textContent = "—";
+    document.getElementById("paceText").textContent = "—";
+  }
+
+  // trend pill + chart
+  const trendPill = document.getElementById("trendPill");
+  const chartNote = document.getElementById("chartNote");
+
+  if(weighIns.length >= 2){
+    const last = weighIns[weighIns.length-1].w;
+    const prev = weighIns[weighIns.length-2].w;
+    const diff = last - prev;
+    const dir = diff < 0 ? "down" : (diff > 0 ? "up" : "flat");
+    const avg7 = sevenPointAvg(weighIns);
+
+    trendPill.textContent = `Last: ${diff.toFixed(1)} lb (${dir}) • 7pt avg: ${avg7.toFixed(1)}`;
+    chartNote.textContent = "Trend > noise. Add 3–4 weigh-ins/week for best signal.";
+  }else{
+    trendPill.textContent = "Trend: add weigh-ins";
+    chartNote.textContent = "Add at least 2 weigh-ins in fitness.json to draw the line.";
+  }
+
+  drawChart(weighIns, Number.isFinite(goal) ? goal : null);
 }
 
-init();
+init().catch((e)=>{
+  const el = document.getElementById("errLeft");
+  el.style.display = "block";
+  el.textContent = "Could not load fitness.json or render chart. Check that fitness.json exists in the repo root.";
+});
 </script>
 </body>
 </html>
